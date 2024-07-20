@@ -1,0 +1,7 @@
+pip install django
+pip install django-cors-headers
+pip install python-dotenv
+pip install pytesseract
+pip install opencv-python
+pip install google-generativeai
+pip install openai

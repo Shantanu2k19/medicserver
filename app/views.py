@@ -38,6 +38,10 @@ def upload_image(request):
         api_key = request.headers.get('X-APIKEY')
         load_dotenv()
         SECRET_KEY = os.getenv('SECRET_KEY')
+
+        if SECRET_KEY is None:
+          return JsonResponse({'error': 'Cannot load API Key'}, status=401)
+
         if api_key != SECRET_KEY:
             return JsonResponse({'error': 'Invalid API Key'}, status=401)
 
