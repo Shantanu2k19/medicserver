@@ -1,14 +1,27 @@
 import json
+import re
 
 def processJson(data_string):
     print("before-")
     print(data_string)
     print(type(data_string))
 
-    data_string = data_string[7:]
+    pattern = r'```json(.*?)```'
+    match = re.search(pattern, data_string, re.DOTALL)
+
+    extracted_string = ""
+    if match:
+        extracted_string = match.group(1).strip()
+    else:
+        print("No match found.")
+        return False, ""
     
-    data_string = data_string[:-3]
-    
-    transformed_string = '{ "medData": ' + data_string + ' }'
-    
-    return json.loads(transformed_string)
+    transformed_string = '{ "medData": ' + extracted_string + ' }'
+
+    try:
+        parsed_data = json.loads(transformed_string)
+        return True, parsed_data
+    except json.JSONDecodeError as e:
+        print("Parsing failed:")
+        print(f"Error: {e}")
+        return False, ""

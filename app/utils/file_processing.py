@@ -53,12 +53,18 @@ def processFile(uploaded_image_file, username, ret):
         print("status not zero")
         return
     
-    ret["data"] = processJson(ret['data'])
+    success, result = processJson(ret['data'])
+    
+    if not success:
+        ret["status"] = 401
+        ret["mssg"] = "Gemini result not found"
+        return
+    
+    ret["data"] = result
 
-    print('\n\n\n\n\n__________________\n\n\n\n\n')
-    print("after-")
-    print(ret["data"])
-    print(type(ret["data"]))
+    print("\n\n\n\n\nafter----\n")
+    print(result)
+    print(type(result))
 
     try:
         json_data = json.dumps(ret["data"])
@@ -70,8 +76,6 @@ def processFile(uploaded_image_file, username, ret):
         print(f"######\nAn unexpected error occurred\n{e}\n######### ")
         ret["status"] = 500
         ret["mssg"] = "An unexpected error occurred"
-    
-
 
     print("extraction success, saving file")
 
@@ -93,7 +97,7 @@ def processFile(uploaded_image_file, username, ret):
     os.remove(temp_file.name)
 
     # file_name = default_storage.save(fileName, ContentFile(file.read()))
-    file_url = os.path.join('/media/', saved_file_name)
+    file_url = os.path.join('media/', saved_file_name)
 
     print("url is "+str(file_url))
     print("name is "+fileName)

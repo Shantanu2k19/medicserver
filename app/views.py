@@ -144,7 +144,7 @@ def sampleData(request):
             "status": 200,
             "mssg": "success",
             "data": x,
-            "file_url": settings.BASE_URL+"user1_max.j_17_07_2024_14_03_02.jpg",
+            "file_url": settings.BASE_URL+"/media/user1_max.j_18_07_2024_16_27_18.jpg",
             "upload_date": "21/04/2001(21:21)",
             "verification": 0,
             "verification_doc_name": "abhishek kumar",
@@ -155,16 +155,20 @@ def sampleData(request):
 
 
 def get_history(request):
-  print("get shotory...")
+  print("get History...")
   api_key = request.headers.get('X-APIKEY')
   load_dotenv()
   SECRET_KEY = os.getenv('SECRET_KEY')
+
+  if SECRET_KEY is None:
+    return JsonResponse({'error': 'Cannot load API Key'}, status=401)
+
   if api_key != SECRET_KEY:
-      return JsonResponse({'error': 'Invalid API Key'}, status=401)
+    return JsonResponse({'error': 'Invalid API Key'}, status=401)
 
   username = request.headers.get('X-USERNAME')
   if not username:
-      return JsonResponse({'error': 'Username not found'}, status=401)
+    return JsonResponse({'error': 'Username not found'}, status=401)
 
   print("request from :"+username)
         

@@ -17,7 +17,7 @@ from pathlib import Path
 import os 
 from logging.handlers import RotatingFileHandler
 from enum import Enum
-
+import os
 #CONFIG PARAMETERS
 
 class SUPPORTED_MODELS(Enum):
@@ -27,7 +27,7 @@ class SUPPORTED_MODELS(Enum):
 
 MODEL=SUPPORTED_MODELS.GEMINI
 
-BASE_URL="http://127.0.0.1:8000/media/"
+BASE_URL="https://mymedicserver.pythonanywhere.com/"
 
 
 # LOGGING = {
@@ -74,7 +74,11 @@ SECRET_KEY = 'ygq!uhn2@)if(oizzy8wod9m*=*s8=bm0830+&iebiual!+pgo'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'mymedicserver.pythonanywhere.com',
+    '127.0.0.1:8000/',
+    '127.0.0.1'
+]
 
 
 # Application definition
