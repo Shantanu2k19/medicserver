@@ -14,7 +14,8 @@ def geminiModel(extracted_image_data, ret, query):
         ret["mssg"]="Gemini API key not found in environment variables."
         return
 
-    service_account_path = 'mymedic-gcp.json'
+    currentHome = os.getcwd()
+    service_account_path = os.path.join(currentHome, 'mymedic-gcp.json')
 
     if "GOOGLE_APPLICATION_CREDENTIALS" not in os.environ:
         print("Environment variable 'GOOGLE_APPLICATION_CREDENTIALS' is not set.")

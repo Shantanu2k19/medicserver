@@ -28,7 +28,8 @@ def extractTextAndDraw(processed_two_imgs, uploaded_image_file):
     np_img_color = processed_two_imgs[1]
 
     imgH, imgW = processed_two_imgs[0].shape[:2]
-    print("Height:", imgH, ",Width:", imgW)
+    print(f"Height[{imgH}], Width[{imgW}]")
+
     
     lineWidth = math.ceil(imgH/2000)
     widhtScale = math.ceil(imgH/100)

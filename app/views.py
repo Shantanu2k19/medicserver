@@ -25,14 +25,14 @@ from app.utils.text_processing import processJson
 #get csrf token
 def get_csrf_token(request):
     email = request.GET.get('email')
-    logging.info("get_csrf_token for :", email)
+    print("get_csrf_token for :", email)
     return JsonResponse({'csrfToken': get_token(request)})
 
 
 #upload image and get data 
 @csrf_exempt
 def upload_image(request):
-    logging.info("upload_image____")
+    print("upload_image____")
     if request.method == 'POST' and request.FILES.get('file'):
         api_key = request.headers.get('X-APIKEY')
         load_dotenv()
@@ -79,12 +79,12 @@ def upload_image(request):
 
 #index view
 def index(request):
-    logging.info("index____")
+    print("index____")
     return render(request, "app/index.html")
 
 
 def sampleData(request):
-    logging.info("sample_____")
+    print("sample_____")
     data = ''
     current_directory = os.getcwd()
     new_path = os.path.join(current_directory,'app/utils/sampleData.txt')
@@ -146,13 +146,16 @@ def get_history(request):
         else:
           file_info['verification_doc_name'] = "unverified"
 
-        file_info['verification_date'] = file.verification_date.strftime('%d/%m/%Y (%H:%M)')
+        if file.verification_date is not None:
+            file_info['verification_date'] = file.verification_date.strftime('%d/%m/%Y (%H:%M)')
+        else:
+            file_info['verification_date'] = None 
         file_info['verification_comment'] = file.verification_comment
 
         data.append(file_info)
 
       except Exception as e:
-        print(f"file for {file_entry} not found!\n[[{e}]")
+        print(f"for file[{file_entry}], error->[{e}]")
   except Exception as e:
     print(f"user not found [{e}]")
     return JsonResponse({'message': 'User not found'}, status=203)
