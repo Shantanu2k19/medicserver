@@ -3,10 +3,43 @@ from django.conf import settings
 from app.llmModels.gemini import geminiModel 
 from app.llmModels.openai import opemnAImodel
 
-query = '''below is the text extracted from prescription of a patient. 
-From the given text, extract the information from it and provide it all in json format. extract medicines prescribed and list their name as 'name', what are they used for as 'use',dosage in prescription or recommended dosage as 'dosage',
-side effects as 'sideeffects', and the type also how it works and treats the disease it is for as 'working'. In the last json value, give all the extra info you were able to retrieve from the text.
-give general recommended information if it is not provided in text. text : '''
+query = '''
+Below is the text extracted from the prescription of a patient. From the given text, Extract medical information from the provided prescription text and output it in strict JSON format. Give the following information for each prescribed medicine:
+
+- `name`: The name of the medicine.
+- `use`: What the medicine is used for.
+- `dosage`: The dosage in the prescription or the recommended dosage.
+- `sideeffects`: Any side effects of the medicine.
+- `working`: How the medicine works and treats the disease.
+- `type`: The type of the medicine (e.g., tablet, syrup).
+
+Additionally, include any extra information you were able to retrieve from the text under the key `extra_info`.  For `extra_info`, save the information in the format where the key is the title of the info and the value is the detail retrieved.
+If the text does not provide specific details, include general recommended information.
+
+Here's the template for the JSON structure:
+```json
+{
+  "prescriptions": [
+    {
+      "name": "",
+      "use": "",
+      "dosage": "",
+      "sideeffects": "",
+      "working": "",
+      "type": ""
+    }
+  ],
+  "extra_info": {
+    "key1": "value1",
+    "key2": "value2"
+  }
+}
+```
+If there is no text or text provided does not seems to be medical information, return this exact string:NO_DATA.
+
+prescription text:
+
+'''
 
 model = settings.MODEL
 supported_models=settings.SUPPORTED_MODELS

@@ -119,6 +119,7 @@ CORS_ALLOW_HEADERS = [
     'content-type',
     'x-csrftoken',
     'x-username',
+    'x-usremail',
     'x-APIKEY',
 ]
 
@@ -181,7 +182,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 

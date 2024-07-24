@@ -24,9 +24,8 @@ from app.utils.text_processing import processJson
 
 #get csrf token
 def get_csrf_token(request):
-    logging.info("get_csrf_token____")
-    username = request.GET.get('username')
-    logging.info('user [%s]',username)
+    email = request.GET.get('email')
+    logging.info("get_csrf_token for :", email)
     return JsonResponse({'csrfToken': get_token(request)})
 
 
@@ -45,11 +44,11 @@ def upload_image(request):
         if api_key != SECRET_KEY:
             return JsonResponse({'error': 'Invalid API Key'}, status=401)
 
-        username = request.headers.get('X-USERNAME')
-        if not username:
-            return JsonResponse({'error': 'Username not found'}, status=401)
+        usrEmail = request.headers.get('X-EMAIL')
+        if not usrEmail:
+            return JsonResponse({'error': 'Email not found'}, status=401)
 
-        print("request from :"+username)
+        print("request from :"+usrEmail)
         
         uploaded_image_file = request.FILES['file']
         ret = {
@@ -63,7 +62,7 @@ def upload_image(request):
             "verification_date": "",
             "verification_comment": "",
         }
-        processFile(uploaded_image_file, username, ret)
+        processFile(uploaded_image_file, usrEmail, ret)
         print("processing done")
 
         if(ret["status"]!=200):
@@ -77,73 +76,26 @@ def upload_image(request):
         return JsonResponse({'message': 'File uploaded successfully', 'ret': ret})
     return JsonResponse({'message': 'No file found'}, status=400)
 
+
 #index view
 def index(request):
     logging.info("index____")
     return render(request, "app/index.html")
 
-data = """```json
-[
-  {
-    "name": "ISOTROIN 20 MG",
-    "use": "Treatment of severe acne",
-    "dosage": "1 tablet every alternate day after meal",
-    "sideeffects": "Dry skin, itching, nosebleeds, muscle aches, joint pain, elevated liver enzymes, mood changes, depression (rare)",
-    "working": "Isotretinoin is a retinoid that reduces the amount of oil produced by glands in the skin. It also shrinks the size of oil glands, reduces inflammation, and helps prevent bacteria from clogging pores.",
-    "extraInfo": ""
-  },
-  {
-    "name": "Clindamycin Lotion",
-    "use": "Treatment of acne",
-    "dosage": "Apply once daily at night",
-    "sideeffects": "Dry skin, itching, burning, redness, peeling",
-    "working": "Clindamycin is an antibiotic that works by stopping the growth of bacteria that can cause acne.",
-    "extraInfo": ""
-  },
-  {
-    "name": "UV Gel SPF 30",
-    "use": "Sun protection",
-    "dosage": "Apply as needed before sun exposure",
-    "sideeffects": "Rarely, allergic reactions (rash, itching, swelling)",
-    "working": "Provides broad-spectrum protection against harmful UVA and UVB rays, protecting skin from sunburn and sun damage.",
-    "extraInfo": ""
-  },
-  {
-    "name": "FASHX 7 MG Shampoo",
-    "use": "Not specified, likely for scalp condition related to acne",
-    "dosage": "Apply every alternate day",
-    "sideeffects": "Not clear without knowing active ingredients. Could include dryness, itching, irritation.",
-    "working": "Mechanism of action depends on the active ingredients. Could be antifungal, anti-inflammatory, or keratolytic.",
-    "extraInfo": ""
-  },
-  {
-    "name": "IDERM Lotion",
-    "use": "Treatment of various skin conditions, likely moisturizing and soothing for acne-prone skin",
-    "dosage": "Apply once daily",
-    "sideeffects": "Not clear without knowing active ingredients. Generally well-tolerated; potential for mild irritation.",
-    "working": "Depends on the specific formulation. Could contain ingredients to moisturize, soothe, protect, or repair the skin barrier.",
-    "extraInfo": ""
-  }
-],
-"extraInfo": {
-  "patientName": "Mr zod",
-  "patientAge": "8 years 3 months",
-  "patientSex": "Male",
-  "doctorName": "Dr Arora",
-  "doctorSpeciality": "Allergy",
-  "provisionalDiagnosis": "Acne",
-  "reviewAfter": "14 days" 
-}
-```"""
 
 def sampleData(request):
     logging.info("sample_____")
-    x = processJson(data)
-    print(x)
+    data = ''
+    current_directory = os.getcwd()
+    new_path = os.path.join(current_directory,'app/utils/sampleData.txt')
+    with open(new_path, 'r') as file:
+      data = file.read()
+    result, ext = processJson(data)
+    print(ext)
     ret = {
             "status": 200,
             "mssg": "success",
-            "data": x,
+            "data": ext,
             "file_url": settings.BASE_URL+"/media/user1_max.j_18_07_2024_16_27_18.jpg",
             "upload_date": "21/04/2001(21:21)",
             "verification": 0,
@@ -166,18 +118,14 @@ def get_history(request):
   if api_key != SECRET_KEY:
     return JsonResponse({'error': 'Invalid API Key'}, status=401)
 
-  username = request.headers.get('X-USERNAME')
-  if not username:
-    return JsonResponse({'error': 'Username not found'}, status=401)
+  usrEmail = request.headers.get('X-USEREMAIL')
+  if not usrEmail:
+    return JsonResponse({'error': 'usrEmail not found'}, status=401)
 
-  print("request from :"+username)
-        
-
-  print(username)
-  print(api_key)
+  print("request from :"+usrEmail)
   
   try:
-    user = UserDetails.objects.get(username=username)
+    user = UserDetails.objects.get(usrEmail=usrEmail)
 
     data = []
 
@@ -207,7 +155,7 @@ def get_history(request):
         print(f"file for {file_entry} not found!\n[[{e}]")
   except Exception as e:
     print(f"user not found [{e}]")
-    return JsonResponse({'message': 'User not found'}, status=401)
+    return JsonResponse({'message': 'User not found'}, status=203)
 
   print(data)
   try:

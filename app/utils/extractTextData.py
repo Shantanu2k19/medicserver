@@ -4,6 +4,7 @@ import tempfile
 import re
 from PIL import Image
 from pytesseract import Output
+import math
 
 def extractImageTextData(uploaded_image_file, ret):
     print("extractImageTextData")
@@ -25,6 +26,13 @@ def extractImageTextData(uploaded_image_file, ret):
 def extractTextAndDraw(processed_two_imgs, uploaded_image_file):
     processed_np_img = processed_two_imgs[0]
     np_img_color = processed_two_imgs[1]
+
+    imgH, imgW = processed_two_imgs[0].shape[:2]
+    print("Height:", imgH, ",Width:", imgW)
+    
+    lineWidth = math.ceil(imgH/2000)
+    widhtScale = math.ceil(imgH/100)
+    textSize = (imgH/2000)
 
     data = pytesseract.image_to_data(processed_np_img, output_type=Output.DICT)
 
@@ -63,19 +71,22 @@ def extractTextAndDraw(processed_two_imgs, uploaded_image_file):
         left, top, width, height = block_data['left'], block_data['top'], block_data['width'], block_data['height']
         
         #draw rectangle 
-        cv2.rectangle(np_img_with_blocks, (left, top), (left + width, top + height), (255, 0, 0), 4) #BGR
+        cv2.rectangle(np_img_with_blocks, (left, top), (left + width, top + height), (255, 0, 0), lineWidth) #BGR
 
         #draw circle 
         if(new_block_num<10):
-            circLeft = left+20
-            radius = 40
+            radius = widhtScale
+            circLeft = left+radius
         else:
-            circLeft = left+40
-            radius = 50
-        cv2.circle(np_img_with_blocks, (circLeft, top - 35), radius, (255, 255, 255), -1)  # -1 fills the circle
+            radius = math.ceil(widhtScale + widhtScale/3)
+            circLeft = left+radius
+        cv2.circle(np_img_with_blocks, (circLeft, top - radius), radius, (255, 255, 255), -1)  # -1 fills the circle
 
         #text 
-        cv2.putText(np_img_with_blocks, str(new_block_num), (left, top - 12), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 215), 4)
+        if(new_block_num<10):
+            cv2.putText(np_img_with_blocks, str(new_block_num), (math.floor(left+radius/2), math.floor(top-radius/2)), cv2.FONT_HERSHEY_SIMPLEX, textSize, (0, 0, 215), lineWidth )
+        else:
+            cv2.putText(np_img_with_blocks, str(new_block_num), (math.floor(left+radius/2-widhtScale/3), math.floor(top-radius/2)), cv2.FONT_HERSHEY_SIMPLEX, textSize, (0, 0, 215), lineWidth)
         # print(f"Block {new_block_num} Text: {block_data['text']}")
         json_image_data[str(new_block_num)]= block_data['text']
         text_data += " "+block_data['text']

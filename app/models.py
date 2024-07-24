@@ -1,11 +1,11 @@
 from django.db import models
 
 class UserDetails(models.Model):
-    username = models.CharField(max_length=150, primary_key=True)
+    usrEmail = models.CharField(max_length=150, primary_key=True)
     files_list = models.JSONField(default=list)  #can be changed to ManyToMany
 
     def __str__(self):
-        return self.username
+        return self.usrEmail
 
 
 class Doctors(models.Model):
@@ -27,8 +27,8 @@ class FileDetails(models.Model):
     
     isVerified = models.IntegerField(default=0)  #0: not verifed, 1:verified all good, 2: verified with comments
     verification_doc = models.ForeignKey(Doctors, on_delete=models.SET_NULL, null=True, blank=True)
-    verification_date =  models.DateTimeField(auto_now=True)
-    verification_comment = models.CharField(max_length=250, default='')
+    verification_date =  models.DateTimeField(null=True, blank=True, default=None)
+    verification_comment = models.CharField(max_length=250, default='', null=True, blank=True)
 
     def __str__(self):
         return str(self.file_name)

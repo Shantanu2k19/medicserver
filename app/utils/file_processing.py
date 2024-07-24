@@ -16,13 +16,13 @@ import numpy as np
 import tempfile
 import json
 
-def processFile(uploaded_image_file, username, ret):
+def processFile(uploaded_image_file, usrEmail, ret):
     print("processing file")
 
     current_datetime = datetime.now()
     file_uuid = current_datetime.strftime("%d_%m_%Y_%H_%M_%S")
     fname, file_extension = os.path.splitext(uploaded_image_file.name)
-    fileName = username[0:5]+"_"+uploaded_image_file.name[0:5]+"_"+str(file_uuid)+file_extension
+    fileName = usrEmail[0:5]+"_"+uploaded_image_file.name[0:5]+"_"+str(file_uuid)+file_extension
     
     #extension handling 
     if(
@@ -52,6 +52,12 @@ def processFile(uploaded_image_file, username, ret):
     if(ret["status"]!=200):
         print("status not zero")
         return
+
+    print(len(ret['data']))
+    if(ret['data']=="NO_DATA." or len(ret['data'])<100):
+        ret["status"] = 203
+        ret["mssg"] = "NO_DATA"
+        return
     
     success, result = processJson(ret['data'])
     
@@ -65,18 +71,7 @@ def processFile(uploaded_image_file, username, ret):
     print("\n\n\n\n\nafter----\n")
     print(result)
     print(type(result))
-
-    try:
-        json_data = json.dumps(ret["data"])
-    except (TypeError, ValueError, json.JSONDecodeError) as e:
-        print(f"######\nJSON conversion failed\n{e}\n######### ")
-        ret["status"] = 401
-        ret["mssg"] = "JSON conversion failed for data from LLM"
-    except Exception as e:
-        print(f"######\nAn unexpected error occurred\n{e}\n######### ")
-        ret["status"] = 500
-        ret["mssg"] = "An unexpected error occurred"
-
+    
     print("extraction success, saving file")
 
     new_np_image = cv2.cvtColor(new_np_image, cv2.COLOR_BGR2RGB)
@@ -103,7 +98,7 @@ def processFile(uploaded_image_file, username, ret):
     print("name is "+fileName)
     
     try:
-        user_files, _ = UserDetails.objects.get_or_create(username=username)
+        user_files, _ = UserDetails.objects.get_or_create(usrEmail=usrEmail)
         user_files.files_list.append(str(fileName))
         user_files.save()
         
