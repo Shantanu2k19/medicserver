@@ -28,7 +28,7 @@ class FileDetails(models.Model):
     isVerified = models.IntegerField(default=0)  #0: not verifed, 1:verified all good, 2: verified with comments
     verification_doc = models.ForeignKey(Doctors, on_delete=models.SET_NULL, null=True, blank=True)
     verification_date =  models.DateTimeField(null=True, blank=True, default=None)
-    verification_comment = models.CharField(max_length=250, default='', null=True, blank=True)
+    verification_comment = models.CharField(max_length=800, default='', null=True, blank=True)
 
     def __str__(self):
         return str(self.file_name)

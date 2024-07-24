@@ -106,13 +106,15 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Add your Next.js app's URL here
+    "http://localhost:3000",
+    "https://google-mymedic.vercel.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True 
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",  # Add your Next.js app's URL here
+    "http://localhost:3000",  
+    "https://google-mymedic.vercel.app",
 ]
 
 CORS_ALLOW_HEADERS = [

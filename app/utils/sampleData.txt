@@ -1,0 +1,53 @@
+```json
+[
+  {
+    "name": "ISOTROIN 20 MG",
+    "use": "Treatment of severe acne",
+    "dosage": "1 tablet every alternate day after meal",
+    "sideeffects": "Dry skin, itching, nosebleeds, muscle aches, joint pain, elevated liver enzymes, mood changes, depression (rare)",
+    "working": "Isotretinoin is a retinoid that reduces the amount of oil produced by glands in the skin. It also shrinks the size of oil glands, reduces inflammation, and helps prevent bacteria from clogging pores.",
+    "extraInfo": ""
+  },
+  {
+    "name": "Clindamycin Lotion",
+    "use": "Treatment of acne",
+    "dosage": "Apply once daily at night",
+    "sideeffects": "Dry skin, itching, burning, redness, peeling",
+    "working": "Clindamycin is an antibiotic that works by stopping the growth of bacteria that can cause acne.",
+    "extraInfo": ""
+  },
+  {
+    "name": "UV Gel SPF 30",
+    "use": "Sun protection",
+    "dosage": "Apply as needed before sun exposure",
+    "sideeffects": "Rarely, allergic reactions (rash, itching, swelling)",
+    "working": "Provides broad-spectrum protection against harmful UVA and UVB rays, protecting skin from sunburn and sun damage.",
+    "extraInfo": ""
+  },
+  {
+    "name": "FASHX 7 MG Shampoo",
+    "use": "Not specified, likely for scalp condition related to acne",
+    "dosage": "Apply every alternate day",
+    "sideeffects": "Not clear without knowing active ingredients. Could include dryness, itching, irritation.",
+    "working": "Mechanism of action depends on the active ingredients. Could be antifungal, anti-inflammatory, or keratolytic.",
+    "extraInfo": ""
+  },
+  {
+    "name": "IDERM Lotion",
+    "use": "Treatment of various skin conditions, likely moisturizing and soothing for acne-prone skin",
+    "dosage": "Apply once daily",
+    "sideeffects": "Not clear without knowing active ingredients. Generally well-tolerated; potential for mild irritation.",
+    "working": "Depends on the specific formulation. Could contain ingredients to moisturize, soothe, protect, or repair the skin barrier.",
+    "extraInfo": ""
+  }
+],
+"extraInfo": {
+  "patientName": "Mr zod",
+  "patientAge": "8 years 3 months",
+  "patientSex": "Male",
+  "doctorName": "Dr Arora",
+  "doctorSpeciality": "Allergy",
+  "provisionalDiagnosis": "Acne",
+  "reviewAfter": "14 days" 
+}
+```
