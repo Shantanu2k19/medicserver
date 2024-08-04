@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 from django.middleware.csrf import get_token
 import json
 from django.utils import timezone
-from app.models import UserDetails, FileDetails
+from app.models import UserDetails, FileDetails, Doctors
 from django.conf import settings
 
 #utility functions
@@ -160,7 +160,7 @@ def get_history(request):
     print(f"user not found [{e}]")
     return JsonResponse({'message': 'User not found'}, status=203)
 
-  print(data)
+  print(len(data))
   try:
     data = json.dumps(data)
   except (TypeError, ValueError, json.JSONDecodeError) as e:
@@ -171,6 +171,101 @@ def get_history(request):
     return JsonResponse({'message': 'JSON conversion failed'}, status=401)
 
   return JsonResponse({'message': 'History get success', 'ret': data}, status=200)
+
+
+def doc_info(request):
+  print("get History...")
+  api_key = request.headers.get('X-APIKEY')
+  load_dotenv()
+  SECRET_KEY = os.getenv('SECRET_KEY')
+
+  if SECRET_KEY is None:
+    return JsonResponse({'error': 'Cannot load API Key'}, status=401)
+
+  if api_key != SECRET_KEY:
+    return JsonResponse({'error': 'Invalid API Key'}, status=401)
+
+  usrEmail = request.headers.get('X-USEREMAIL')
+  if not usrEmail:
+    return JsonResponse({'error': 'usrEmail not found'}, status=401)
+
+  print("request from :"+usrEmail)
+  
+  try:
+    user = Doctors.objects.get(doc_email=usrEmail)
+    print(user)
+    doc_data = {
+       "name": user.doc_name,
+       "qualifaction":user.doc_qualifications
+    }
+    return JsonResponse({'ret': doc_data}, status=200)
+
+  except Exception as e:
+    print(f"user not found [{e}]")
+    return JsonResponse({'message': 'User not found'}, status=203)
+
+
+def get_verify_list(request):
+  print("get Verify list...")
+  api_key = request.headers.get('X-APIKEY')
+  load_dotenv()
+  SECRET_KEY = os.getenv('SECRET_KEY')
+
+  if SECRET_KEY is None:
+    return JsonResponse({'error': 'Cannot load API Key'}, status=401)
+
+  if api_key != SECRET_KEY:
+    return JsonResponse({'error': 'Invalid API Key'}, status=401)
+
+  usrEmail = request.headers.get('X-USEREMAIL')
+  if not usrEmail:
+    return JsonResponse({'error': 'usrEmail not found'}, status=401)
+
+  print("request from :"+usrEmail)
+  
+  data = []
+  
+  try:
+    doc = Doctors.objects.get(doc_email=usrEmail)
+    files = FileDetails.objects.all()
+
+    for file in files:
+      if(file.isVerified == False or file.verification_doc==doc):
+        file_info = {}
+        file_info["data_from_llm"] = file.data_from_llm
+        file_info["img_url"] = settings.BASE_URL+file.file_url
+        file_info['upload_date'] = file.upload_date.strftime('%d/%m/%Y (%H:%M)')
+        file_info["file_name"] = file.file_name
+
+        file_info['verification'] = file.isVerified
+        if file.verification_date is not None:
+            file_info['verification_date'] = file.verification_date.strftime('%d/%m/%Y (%H:%M)')
+        else:
+            file_info['verification_date'] = "" 
+        file_info['verification_comment'] = file.verification_comment             
+        data.append(file_info)
+
+  except Exception as e:
+    print(f"Excption [{e}]")
+    return JsonResponse({'message': 'issue occured'+str(e)[0:50]}, status=203)
+
+  print(len(data))
+
+  try:
+    data = json.dumps(data)
+  except (TypeError, ValueError, json.JSONDecodeError) as e:
+    print(f"######\nJSON conversion failed\n{e}\n######### ")
+    return JsonResponse({'message': 'JSON conversion failed'}, status=401)
+  except Exception as e:
+    print(f"######\nAn unexpected error occurred\n{e}\n######### ")
+    return JsonResponse({'message': 'JSON conversion failed'}, status=401)
+
+  return JsonResponse({'message': 'History get success', 'ret': data}, status=200)
+
+
+
+
+
 
 # logging.debug("This is a debug message")
 # logging.info("This is an info message")

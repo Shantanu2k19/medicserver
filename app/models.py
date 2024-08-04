@@ -9,13 +9,13 @@ class UserDetails(models.Model):
 
 
 class Doctors(models.Model):
-    doc_uname = models.CharField(primary_key=True, default="default_name", max_length=150)
+    doc_email = models.CharField(primary_key=True, default="default_mail", max_length=150)
     doc_name = models.CharField(max_length=150)
     doc_qualifications = models.CharField(max_length=150)
-    verified_list = models.JSONField(default=list)
+    verified_list = models.JSONField(default=list, null=True, blank=True)
 
     def __str__(self):
-        return str(self.doc_uname) 
+        return str(self.doc_email) 
 
 class FileDetails(models.Model):
     file_name = models.CharField(primary_key=True, default="default_name", editable=False, max_length=150)
