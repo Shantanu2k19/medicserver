@@ -108,7 +108,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://google-mymedic.vercel.app",
-    "https://mymedic.vercel.app/",
+    "https://mymedic.vercel.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True 
@@ -116,7 +116,7 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",  
     "https://google-mymedic.vercel.app",
-    "https://mymedic.vercel.app/",
+    "https://mymedic.vercel.app",
 ]
 
 CORS_ALLOW_HEADERS = [
