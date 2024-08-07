@@ -246,7 +246,7 @@ def get_verify_list(request):
         data.append(file_info)
 
   except Exception as e:
-    print(f"Excption [{e}]")
+    print(f"Exception [{e}]")
     return JsonResponse({'message': 'issue occured'+str(e)[0:50]}, status=203)
 
   print(len(data))
@@ -263,7 +263,47 @@ def get_verify_list(request):
   return JsonResponse({'message': 'History get success', 'ret': data}, status=200)
 
 
+def verify_file(request):
+  print("verify_file...")
 
+  api_key = request.headers.get('X-APIKEY')
+  load_dotenv()
+  SECRET_KEY = os.getenv('SECRET_KEY')
+
+  if SECRET_KEY is None:
+    return JsonResponse({'error': 'Cannot load API Key'}, status=401)
+
+  if api_key != SECRET_KEY:
+    return JsonResponse({'error': 'Invalid API Key'}, status=401)
+
+  docEmail = request.headers.get('X-USEREMAIL')
+  if not docEmail:
+    return JsonResponse({'error': 'usrEmail not found'}, status=401)
+  
+  doc_comment = request.GET.get('doc_comment')
+  verified_file_name = request.GET.get('verified_file')
+
+  print("request from :"+docEmail+" for file:"+verified_file_name)
+  try:
+    verified_file = FileDetails.objects.get(file_name=verified_file_name)
+    verifying_doc = Doctors.objects.get(doc_email=docEmail)
+
+    verified_file.verification_doc = verifying_doc
+    verified_file.verification_comment = doc_comment
+    verified_file.verification_date = timezone.now()
+    if(len(doc_comment)<5):
+      verified_file.isVerified = 1
+    else:
+      verified_file.isVerified = 2
+    verified_file.save()
+
+    verifying_doc.verified_list.append(verified_file_name)
+    verifying_doc.save()
+    return JsonResponse({'message': 'Success'}, status=200)    
+
+  except Exception as e:
+    print(f"Exception [{e}]")
+    return JsonResponse({'message': 'issue occured'+str(e)[0:50]}, status=203)
 
 
 
