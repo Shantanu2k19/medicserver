@@ -96,6 +96,16 @@ def processFile(uploaded_image_file, usrEmail, ret):
 
     print("url is "+str(file_url))
     print("name is "+fileName)
+
+    if(usrEmail=="demo@gmail.com"):
+        print("demo user, skipping saving")
+        ret["file_url"] = file_url
+        ret["upload_date"] = datetime.now().strftime('%d/%m/%Y (%H:%M)')
+        ret["verification"] = 0
+        ret["verification_doc_name"] = ""
+        ret["verification_date"] = ""
+        ret["verification_comment"] = ""
+        return
     
     try:
         user_files, _ = UserDetails.objects.get_or_create(usrEmail=usrEmail)
