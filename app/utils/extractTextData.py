@@ -5,6 +5,9 @@ import re
 from PIL import Image
 from pytesseract import Output
 import math
+import os
+from pdf2image import convert_from_path
+import numpy as np 
 
 def extractImageTextData(uploaded_image_file, ret):
     print("extractImageTextData")
@@ -19,11 +22,11 @@ def extractImageTextData(uploaded_image_file, ret):
     temp_file.close()
 
     #extract text and draw 
-    image_data = extractTextAndDraw(processed_two_imgs, uploaded_image_file)
+    image_data = extractTextAndDraw(processed_two_imgs)
 
     return image_data
 
-def extractTextAndDraw(processed_two_imgs, uploaded_image_file):
+def extractTextAndDraw(processed_two_imgs):
     processed_np_img = processed_two_imgs[0]
     np_img_color = processed_two_imgs[1]
 
@@ -36,6 +39,7 @@ def extractTextAndDraw(processed_two_imgs, uploaded_image_file):
     textSize = (imgH/2000)
 
     data = pytesseract.image_to_data(processed_np_img, output_type=Output.DICT)
+    # print("ssss",data)
 
     # Create a dictionary to store blocks
     blocks = {}
@@ -134,10 +138,14 @@ def clean_text(text):
     return text.strip()  # Remove leading and trailing spaces
 
 
-def processImage(image_path):
+def processImage(image_path, isPdf=False):
     # print("reading from:"+image_path)
-    np_img = cv2.imread(image_path, flags=cv2.IMREAD_GRAYSCALE)
-    np_img_color = cv2.imread(image_path)
+    if isPdf:
+        np_img = cv2.cvtColor(image_path, cv2.COLOR_RGB2GRAY)
+        np_img_color = cv2.cvtColor(image_path, cv2.COLOR_RGB2BGR)
+    else:
+        np_img = cv2.imread(image_path, flags=cv2.IMREAD_GRAYSCALE)
+        np_img_color = cv2.imread(image_path)
     processed_np_img = cv2.adaptiveThreshold(
         np_img, 255,
         cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
@@ -147,7 +155,35 @@ def processImage(image_path):
     )
     return [processed_np_img, np_img_color]
 
-def extractPdfTextData(file, ret):
-    ret["status"] = 401
-    ret["mssg"] = "pdf files not supported yet"
-    return 
+
+def extractPdfTextData(pdf_file, ret):
+
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_file:
+        for chunk in pdf_file.chunks():
+            temp_file.write(chunk)
+
+    temp_file_path = temp_file.name
+    ret_data = {}
+    try:
+        images = convert_from_path(temp_file_path)
+
+        text = ''
+        # Convert images to NumPy arrays for further processing
+        for img in images:
+            img_np = np.array(img)
+            
+            processed_two_imgs = processImage(img_np, True)
+            ret_data = extractTextAndDraw(processed_two_imgs)
+            text = text + " " + ret_data["str_image_text"]
+        
+        ret_data["str_image_text"] = text
+    except Exception as e:
+        print("exception occured:", str(e))
+        ret["status"]=400
+        ret["mssg"]=str(e)[0:200]
+
+    finally:
+        if os.path.exists(temp_file_path):
+            os.remove(temp_file_path)
+
+    return ret_data

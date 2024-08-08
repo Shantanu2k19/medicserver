@@ -159,8 +159,10 @@ def get_history(request):
   except Exception as e:
     print(f"user not found [{e}]")
     return JsonResponse({'message': 'User not found'}, status=203)
-
+  
+  data = sorted(data, key=lambda x: datetime.strptime(x['upload_date'], '%d/%m/%Y (%H:%M)'))
   print(len(data))
+
   try:
     data = json.dumps(data)
   except (TypeError, ValueError, json.JSONDecodeError) as e:
@@ -250,6 +252,7 @@ def get_verify_list(request):
     return JsonResponse({'message': 'issue occured'+str(e)[0:50]}, status=203)
 
   print(len(data))
+  data = sorted(data, key=lambda x: datetime.strptime(x['upload_date'], '%d/%m/%Y (%H:%M)'))
 
   try:
     data = json.dumps(data)

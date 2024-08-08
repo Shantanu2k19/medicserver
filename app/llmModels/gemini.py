@@ -60,7 +60,7 @@ def geminiModel(extracted_image_data, ret, query):
         return response.text
 
     except Exception as e:
-        print("exception occured")
+        print("exception occured:", str(e))
 
         ret["status"]=400
         ret["mssg"]=str(e)[0:200]

@@ -22,22 +22,22 @@ def processFile(uploaded_image_file, usrEmail, ret):
     current_datetime = datetime.now()
     file_uuid = current_datetime.strftime("%d_%m_%Y_%H_%M_%S")
     fname, file_extension = os.path.splitext(uploaded_image_file.name)
-    fileName = usrEmail[0:5]+"_"+uploaded_image_file.name[0:5]+"_"+str(file_uuid)+file_extension
+    fileName = usrEmail[0:5]+"_"+uploaded_image_file.name[0:5]+"_"+str(file_uuid)+".jpg"
     
     #extension handling 
     if(
         file_extension.lower()=='.png' or 
         file_extension.lower()=='.jpg' or 
-        file_extension!='.jpeg'
+        file_extension.lower()=='.jpeg'
         ):
         extracted_image_data = extractImageTextData(uploaded_image_file, ret)
     
     elif file_extension.lower()=='.pdf':
-        extracted_image_data = extractPdfTextData(file, ret)
+        extracted_image_data = extractPdfTextData(uploaded_image_file, ret)
 
     else:
-        ret["status"] = 401
-        ret["mssg"] = "unsupported file extension"
+        ret["status"] = 415
+        ret["mssg"] = "unsupported media type"
         return
     
     if(ret["status"]!=200):
@@ -128,7 +128,7 @@ def processFile(uploaded_image_file, usrEmail, ret):
         ret["verification_comment"] = ""
         
     except Exception as e:
-        print("exception occured")
+        print("exception occured-",str(e))
         ret["status"]=400
         ret["mssg"]=str(e)[0:200]
  
