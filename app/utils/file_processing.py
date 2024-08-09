@@ -15,11 +15,12 @@ import cv2
 import numpy as np
 import tempfile
 import json
+from django.utils import timezone
 
 def processFile(uploaded_image_file, usrEmail, ret):
     print("processing file")
 
-    current_datetime = datetime.now()
+    current_datetime = timezone.localtime()
     file_uuid = current_datetime.strftime("%d_%m_%Y_%H_%M_%S")
     fname, file_extension = os.path.splitext(uploaded_image_file.name)
     fileName = usrEmail[0:5]+"_"+uploaded_image_file.name[0:5]+"_"+str(file_uuid)+".jpg"
@@ -96,11 +97,12 @@ def processFile(uploaded_image_file, usrEmail, ret):
 
     print("url is "+str(file_url))
     print("name is "+fileName)
+    print("time:",timezone.localtime())
 
     if(usrEmail=="demo@gmail.com"):
         print("demo user, skipping saving")
         ret["file_url"] = file_url
-        ret["upload_date"] = datetime.now().strftime('%d/%m/%Y (%H:%M)')
+        ret["upload_date"] = timezone.localtime().strftime('%d/%m/%Y (%H:%M)')
         ret["verification"] = 0
         ret["verification_doc_name"] = ""
         ret["verification_date"] = ""
@@ -118,7 +120,9 @@ def processFile(uploaded_image_file, usrEmail, ret):
             str_image_text = extracted_image_data["str_image_text"],
             data_from_llm = ret["data"],
             file_url = file_url,
+            upload_date = timezone.localtime()
         )
+        file_details_obj.save()
 
         ret["file_url"] = file_url
         ret["upload_date"] = file_details_obj.upload_date.strftime('%d/%m/%Y (%H:%M)')

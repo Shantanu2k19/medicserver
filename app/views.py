@@ -80,6 +80,7 @@ def upload_image(request):
 #index view
 def index(request):
     print("index____")
+    print("time-", timezone.localtime())
     return render(request, "app/index.html")
 
 
@@ -137,7 +138,7 @@ def get_history(request):
         
         file_info["data_from_llm"] = file.data_from_llm
         file_info["img_url"] = settings.BASE_URL+file.file_url
-        file_info['upload_date'] = file.upload_date.strftime('%d/%m/%Y (%H:%M)')
+        file_info['upload_date'] =  timezone.localtime(file.upload_date).strftime('%d/%m/%Y (%H:%M)')
         
 
         file_info['verification'] = file.isVerified
@@ -147,7 +148,7 @@ def get_history(request):
           file_info['verification_doc_name'] = "unverified"
 
         if file.verification_date is not None:
-            file_info['verification_date'] = file.verification_date.strftime('%d/%m/%Y (%H:%M)')
+            file_info['verification_date'] = timezone.localtime(file.verification_date).strftime('%d/%m/%Y (%H:%M)')
         else:
             file_info['verification_date'] = None 
         file_info['verification_comment'] = file.verification_comment
@@ -160,7 +161,7 @@ def get_history(request):
     print(f"user not found [{e}]")
     return JsonResponse({'message': 'User not found'}, status=203)
   
-  data = sorted(data, key=lambda x: datetime.strptime(x['upload_date'], '%d/%m/%Y (%H:%M)'))
+  data = sorted(data, key=lambda x: datetime.strptime(x['upload_date'], '%d/%m/%Y (%H:%M)'), reverse=True)
   print(len(data))
 
   try:
@@ -236,12 +237,12 @@ def get_verify_list(request):
         file_info = {}
         file_info["data_from_llm"] = file.data_from_llm
         file_info["img_url"] = settings.BASE_URL+file.file_url
-        file_info['upload_date'] = file.upload_date.strftime('%d/%m/%Y (%H:%M)')
+        file_info['upload_date'] = timezone.localtime(file.upload_date).strftime('%d/%m/%Y (%H:%M)')
         file_info["file_name"] = file.file_name
 
         file_info['verification'] = file.isVerified
         if file.verification_date is not None:
-            file_info['verification_date'] = file.verification_date.strftime('%d/%m/%Y (%H:%M)')
+            file_info['verification_date'] = timezone.localtime(file.verification_date).strftime('%d/%m/%Y (%H:%M)')
         else:
             file_info['verification_date'] = "" 
         file_info['verification_comment'] = file.verification_comment             
@@ -252,7 +253,7 @@ def get_verify_list(request):
     return JsonResponse({'message': 'issue occured'+str(e)[0:50]}, status=203)
 
   print(len(data))
-  data = sorted(data, key=lambda x: datetime.strptime(x['upload_date'], '%d/%m/%Y (%H:%M)'))
+  data = sorted(data, key=lambda x: datetime.strptime(x['upload_date'], '%d/%m/%Y (%H:%M)'), reverse=True)
 
   try:
     data = json.dumps(data)
@@ -293,7 +294,7 @@ def verify_file(request):
 
     verified_file.verification_doc = verifying_doc
     verified_file.verification_comment = doc_comment
-    verified_file.verification_date = timezone.now()
+    verified_file.verification_date = timezone.localtime()
     if(len(doc_comment)<5):
       verified_file.isVerified = 1
     else:

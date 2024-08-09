@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 class UserDetails(models.Model):
     usrEmail = models.CharField(max_length=150, primary_key=True)
@@ -23,7 +24,7 @@ class FileDetails(models.Model):
     str_image_text = models.TextField(default='No Data Found!!')
     data_from_llm = models.JSONField(default=dict)
     file_url = models.CharField(max_length=150, default='/assets/image_not_found.svg')
-    upload_date = models.DateTimeField(auto_now=True)
+    upload_date = models.DateTimeField(default=timezone.localtime())
     
     isVerified = models.IntegerField(default=0)  #0: not verifed, 1:verified all good, 2: verified with comments
     verification_doc = models.ForeignKey(Doctors, on_delete=models.SET_NULL, null=True, blank=True)
